@@ -1,12 +1,12 @@
-package com.example.accessingdatamysql;
+package WHLive.controller;
 
+import WHLive.model.User;
+import WHLive.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Optional;
 
-@CrossOrigin(origins = "http://localhost:8081")
 @RestController
 @RequestMapping("/api")
 public class MainController {
@@ -14,13 +14,14 @@ public class MainController {
     @Autowired
     private UserRepository userRepository;
 
+    @CrossOrigin(origins = "http://localhost:8081")
     @GetMapping(path="/soci")
-    public ResponseEntity<List<User>> getAllUsers() {
+    public @ResponseBody Iterable<User> getAllUsers() {
         return userRepository.findAll();
     }
 
     @GetMapping(path="/soci/{id}")
-    public @ResponseBody Iterable<User> getUserById() {
-        return userRepository.findAll();
+    public @ResponseBody Optional<User> getUserById(@PathVariable("id") long id) {
+        return userRepository.findById(id);
     }
 }
