@@ -3,6 +3,7 @@ package WHLive.controller;
 import WHLive.model.User;
 import WHLive.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -17,7 +18,7 @@ public class MainController {
     @CrossOrigin(origins = "http://localhost:8081")
     @GetMapping(path="/soci")
     public @ResponseBody Iterable<User> getAllUsers() {
-        return userRepository.findAll();
+        return userRepository.findAll(Sort.by(Sort.Direction.ASC, "tessera"));
     }
 
     @GetMapping(path="/soci/{id}")

@@ -9,7 +9,7 @@ public class User {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Long id;
-    private int Tessera;
+    private int tessera;
     private String firstName;
     private String lastName;
     private String address;
@@ -43,11 +43,11 @@ public class User {
     }
 
     public int getTessera() {
-        return Tessera;
+        return tessera;
     }
 
     public void setTessera(int tessera) {
-        Tessera = tessera;
+        this.tessera = tessera;
     }
 
     public String getAddress() {
