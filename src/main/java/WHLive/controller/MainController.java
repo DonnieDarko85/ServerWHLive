@@ -9,13 +9,13 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:8081")
 @RequestMapping("/api")
 public class MainController {
 
     @Autowired
     private UserRepository userRepository;
 
-    @CrossOrigin(origins = "http://localhost:8081")
     @GetMapping(path="/soci")
     public @ResponseBody Iterable<User> getAllUsers() {
         return userRepository.findAll(Sort.by(Sort.Direction.ASC, "tessera"));
@@ -24,5 +24,10 @@ public class MainController {
     @GetMapping(path="/soci/{id}")
     public @ResponseBody Optional<User> getUserById(@PathVariable("id") long id) {
         return userRepository.findById(id);
+    }
+
+    @PostMapping(path="/login")
+    public @ResponseBody String login() {
+        return "QUA CI SONO IO!";
     }
 }
