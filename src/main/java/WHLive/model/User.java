@@ -7,7 +7,7 @@ import java.util.Date;
 @Table(name="mygrv_user")
 public class User {
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private int tessera;
     private String firstName;
@@ -15,6 +15,9 @@ public class User {
     private String address;
     private Date birthDate;
     private String email;
+    private String authToken;
+    private Date authExpire;
+    private String password;
 
     public Long getId() {
         return id;
@@ -24,7 +27,7 @@ public class User {
         this.id = id;
     }
 
-    @Column(name="first_name")
+    @Column(name = "first_name")
     public String getFirstName() {
         return firstName;
     }
@@ -33,7 +36,7 @@ public class User {
         this.firstName = firstName;
     }
 
-    @Column(name="last_name")
+    @Column(name = "last_name")
     public String getLastName() {
         return lastName;
     }
@@ -58,7 +61,7 @@ public class User {
         this.address = address;
     }
 
-    @Column(name="birth_date")
+    @Column(name = "birth_date")
     public Date getBirthDate() {
         return birthDate;
     }
@@ -73,5 +76,31 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    @Column(name = "auth_token")
+    public String getAuthToken() {
+        return authToken;
+    }
+
+    public void setAuthToken(String authToken) {
+        this.authToken = authToken;
+    }
+
+    @Column(name = "auth_expire")
+    public Date getAuthExpire() {
+        return authExpire;
+    }
+
+    public void setAuthExpire(Date authExpire) {
+        this.authExpire = authExpire;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
