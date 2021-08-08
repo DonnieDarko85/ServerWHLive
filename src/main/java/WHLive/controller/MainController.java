@@ -31,8 +31,9 @@ public class MainController {
         //Get user
         User u = userRepository.getUserByTessera(Integer.parseInt(body.tessera));
         //Chek password
+        System.out.println(body.password);
         if(!u.getPassword().equals(body.password)){
-            return new TokenResponse(null);
+            return new TokenResponse(null, -1, null, null);
         }
         //Generate auth token save and return it
         String authToken = UUID.randomUUID().toString();
@@ -43,7 +44,7 @@ public class MainController {
         c.add(Calendar.DAY_OF_YEAR, 30);
         u.setAuthExpire(c.getTime());
         userRepository.save(u);
-        return new TokenResponse(authToken);
+        return new TokenResponse(authToken, u.getTessera(), u.getFirstName(), u.getLastName());
     }
 
     public static class LoginValue {
@@ -64,9 +65,15 @@ public class MainController {
     public static class TokenResponse {
 
         private String token;
+        private int tessera;
+        private String firstName;
+        private String lastName;
 
-        public TokenResponse(String token) {
+        public TokenResponse(String token, int tessera, String firstName, String lastName) {
             this.token = token;
+            this.tessera = tessera;
+            this.firstName = firstName;
+            this.lastName= lastName;
         }
 
         public String getToken() {
@@ -75,6 +82,30 @@ public class MainController {
 
         public void setToken(String token) {
             this.token = token;
+        }
+
+        public int getTessera() {
+            return tessera;
+        }
+
+        public void setTessera(int tessera) {
+            this.tessera = tessera;
+        }
+
+        public String getFirstName() {
+            return firstName;
+        }
+
+        public void setFirstName(String firstName) {
+            this.firstName = firstName;
+        }
+
+        public String getLastName() {
+            return lastName;
+        }
+
+        public void setLastName(String lastName) {
+            this.lastName = lastName;
         }
     }
 }
