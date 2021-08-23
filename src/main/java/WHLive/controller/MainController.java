@@ -27,16 +27,19 @@ public class MainController {
     }
 
     @PostMapping(path="/login")
-    public @ResponseBody TokenResponse login(@RequestBody LoginValue body) {
+    public @ResponseBody LoginResponse login(@RequestBody LoginRequest body) {
         //Get user
         User u = userRepository.getUserByTessera(Integer.parseInt(body.tessera));
+        //TODO THIS IS BULLISH!
         //Chek password
         System.out.println(body.password);
         if(!u.getPassword().equals(body.password)){
-            return new TokenResponse(null, -1, null, null);
+            return new LoginResponse(null, null,-1, null, null);
         }
         //Generate auth token save and return it
         String authToken = UUID.randomUUID().toString();
+        //Generate session token save and return it
+        String sessionToken = UUID.randomUUID().toString();
         u.setAuthToken(authToken);
         //Set expiration of login token
         Calendar c = new GregorianCalendar();
@@ -44,14 +47,23 @@ public class MainController {
         c.add(Calendar.DAY_OF_YEAR, 30);
         u.setAuthExpire(c.getTime());
         userRepository.save(u);
-        return new TokenResponse(authToken, u.getTessera(), u.getFirstName(), u.getLastName());
+        return new LoginResponse(authToken, sessionToken, u.getTessera(), u.getFirstName(), u.getLastName());
     }
 
-    public static class LoginValue {
+    @PostMapping(path="/checkToken")
+    public @ResponseBody CheckTokenResponse login(@RequestBody CheckTokenRequest body) {
+        User u = userRepository.getUserByToken(body.token);
+        if(u == null) return null;
+        //Generate session token save and return it
+        String sessionToken = UUID.randomUUID().toString();
+        return new CheckTokenResponse(sessionToken, u.getTessera(), u.getFirstName(), u.getLastName());
+    }
+
+    public static class LoginRequest {
         private String tessera;
         private String password;
 
-        LoginValue(){}
+        LoginRequest(){}
 
         public void setTessera(String tessera) {
             this.tessera = tessera;
@@ -62,19 +74,64 @@ public class MainController {
         }
     }
 
-    public static class TokenResponse {
-
-        private String token;
+    public static class LoginResponse {
+        private String authToken;
+        private String sessionToken;
         private int tessera;
         private String firstName;
         private String lastName;
 
-        public TokenResponse(String token, int tessera, String firstName, String lastName) {
-            this.token = token;
+        public LoginResponse(String authToken, String sessionToken, int tessera, String firstName, String lastName) {
+            this.authToken = authToken;
             this.tessera = tessera;
             this.firstName = firstName;
-            this.lastName= lastName;
+            this.lastName = lastName;
+            this.sessionToken = sessionToken;
         }
+
+        public String getAuthToken() {
+            return authToken;
+        }
+
+        public void setAuthToken(String token) {
+            this.authToken = token;
+        }
+
+        public int getTessera() {return tessera;}
+
+        public void setTessera(int tessera) {
+            this.tessera = tessera;
+        }
+
+        public String getFirstName() {
+            return firstName;
+        }
+
+        public void setFirstName(String firstName) {
+            this.firstName = firstName;
+        }
+
+        public String getLastName() {
+            return lastName;
+        }
+
+        public void setLastName(String lastName) {
+            this.lastName = lastName;
+        }
+
+        public String getSessionToken() {
+            return sessionToken;
+        }
+
+        public void setSessionToken(String sessionToken) {
+            this.sessionToken = sessionToken;
+        }
+    }
+
+    public static class CheckTokenRequest {
+        private String token;
+
+        CheckTokenRequest(){}
 
         public String getToken() {
             return token;
@@ -83,6 +140,28 @@ public class MainController {
         public void setToken(String token) {
             this.token = token;
         }
+    }
+
+    public static class CheckTokenResponse {
+        private String sessionToken;
+        private int tessera;
+        private String firstName;
+        private String lastName;
+
+        CheckTokenResponse(String sessionToken, int tessera, String firstName, String lastName){
+            this.sessionToken = sessionToken;
+            this.tessera = tessera;
+            this.firstName = firstName;
+            this.lastName= lastName;
+        }
+
+        public String getSessionToken() {
+            return sessionToken;
+        }
+
+        public void setSessionToken(String sessionToken) {
+            this.sessionToken = sessionToken;
+        }
 
         public int getTessera() {
             return tessera;
@@ -90,9 +169,7 @@ public class MainController {
 
         public void setTessera(int tessera) {
             this.tessera = tessera;
-        }
-
-        public String getFirstName() {
+        }public String getFirstName() {
             return firstName;
         }
 
