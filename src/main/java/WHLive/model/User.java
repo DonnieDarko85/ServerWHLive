@@ -6,8 +6,7 @@ import java.util.Date;
 @Entity // This tells Hibernate to make a table out of this class
 @Table(name="mygrv_user")
 public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+
     private Long id;
     private int tessera;
     private String firstName;
@@ -19,6 +18,8 @@ public class User {
     private Date authExpire;
     private String password;
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     public Long getId() {
         return id;
     }

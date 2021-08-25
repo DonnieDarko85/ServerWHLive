@@ -1,6 +1,9 @@
 package WHLive.controller;
 
+import WHLive.messages.*;
+import WHLive.model.PG;
 import WHLive.model.User;
+import WHLive.repository.PgRepository;
 import WHLive.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -15,6 +18,8 @@ public class MainController {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private PgRepository pgRepository;
 
     @GetMapping(path="/soci")
     public @ResponseBody Iterable<User> getAllUsers() {
@@ -29,11 +34,11 @@ public class MainController {
     @PostMapping(path="/login")
     public @ResponseBody LoginResponse login(@RequestBody LoginRequest body) {
         //Get user
-        User u = userRepository.getUserByTessera(Integer.parseInt(body.tessera));
+        User u = userRepository.getUserByTessera(Integer.parseInt(body.getTessera()));
         //TODO THIS IS BULLISH!
         //Chek password
-        System.out.println(body.password);
-        if(!u.getPassword().equals(body.password)){
+        System.out.println(body.getPassword());
+        if(!u.getPassword().equals(body.getPassword())){
             return new LoginResponse(null, null,-1, null, null);
         }
         //Generate auth token save and return it
@@ -51,138 +56,19 @@ public class MainController {
     }
 
     @PostMapping(path="/checkToken")
-    public @ResponseBody CheckTokenResponse login(@RequestBody CheckTokenRequest body) {
-        User u = userRepository.getUserByToken(body.token);
+    public @ResponseBody
+    CheckTokenResponse checkToken(@RequestBody CheckTokenRequest body) {
+        User u = userRepository.getUserByToken(body.getToken());
         if(u == null) return null;
         //Generate session token save and return it
         String sessionToken = UUID.randomUUID().toString();
         return new CheckTokenResponse(sessionToken, u.getTessera(), u.getFirstName(), u.getLastName());
     }
 
-    public static class LoginRequest {
-        private String tessera;
-        private String password;
-
-        LoginRequest(){}
-
-        public void setTessera(String tessera) {
-            this.tessera = tessera;
-        }
-
-        public void setPassword(String password) {
-            this.password = password;
-        }
-    }
-
-    public static class LoginResponse {
-        private String authToken;
-        private String sessionToken;
-        private int tessera;
-        private String firstName;
-        private String lastName;
-
-        public LoginResponse(String authToken, String sessionToken, int tessera, String firstName, String lastName) {
-            this.authToken = authToken;
-            this.tessera = tessera;
-            this.firstName = firstName;
-            this.lastName = lastName;
-            this.sessionToken = sessionToken;
-        }
-
-        public String getAuthToken() {
-            return authToken;
-        }
-
-        public void setAuthToken(String token) {
-            this.authToken = token;
-        }
-
-        public int getTessera() {return tessera;}
-
-        public void setTessera(int tessera) {
-            this.tessera = tessera;
-        }
-
-        public String getFirstName() {
-            return firstName;
-        }
-
-        public void setFirstName(String firstName) {
-            this.firstName = firstName;
-        }
-
-        public String getLastName() {
-            return lastName;
-        }
-
-        public void setLastName(String lastName) {
-            this.lastName = lastName;
-        }
-
-        public String getSessionToken() {
-            return sessionToken;
-        }
-
-        public void setSessionToken(String sessionToken) {
-            this.sessionToken = sessionToken;
-        }
-    }
-
-    public static class CheckTokenRequest {
-        private String token;
-
-        CheckTokenRequest(){}
-
-        public String getToken() {
-            return token;
-        }
-
-        public void setToken(String token) {
-            this.token = token;
-        }
-    }
-
-    public static class CheckTokenResponse {
-        private String sessionToken;
-        private int tessera;
-        private String firstName;
-        private String lastName;
-
-        CheckTokenResponse(String sessionToken, int tessera, String firstName, String lastName){
-            this.sessionToken = sessionToken;
-            this.tessera = tessera;
-            this.firstName = firstName;
-            this.lastName= lastName;
-        }
-
-        public String getSessionToken() {
-            return sessionToken;
-        }
-
-        public void setSessionToken(String sessionToken) {
-            this.sessionToken = sessionToken;
-        }
-
-        public int getTessera() {
-            return tessera;
-        }
-
-        public void setTessera(int tessera) {
-            this.tessera = tessera;
-        }public String getFirstName() {
-            return firstName;
-        }
-
-        public void setFirstName(String firstName) {
-            this.firstName = firstName;
-        }
-
-        public String getLastName() {
-            return lastName;
-        }
-
-        public void setLastName(String lastName) {
-            this.lastName = lastName;
-        }
+    @PostMapping(path="/getUserPGs")
+    public @ResponseBody Iterable<PG> getUserPGs(@RequestBody GetPersonaggioRequest body) {
+        System.out.println("Body" + body);
+        System.out.println("Resp" + pgRepository.getPgByTessera(body.getTessera()));
+        return pgRepository.getPgByTessera(body.getTessera());
     }
 }
