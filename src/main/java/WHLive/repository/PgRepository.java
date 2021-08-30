@@ -8,6 +8,9 @@ import java.util.List;
 
 public interface PgRepository extends JpaRepository<PG, Long> {
 
-    @Query("SELECT pg FROM PG pg where pg.user.tessera = :tessera")
-    List<PG> getPgByTessera(int tessera);
+    @Query("SELECT pg " +
+            " FROM PG pg " +
+            "WHERE pg.user.tessera = :tessera " +
+            "  AND status = 1")
+    PG getActivePgForTessera(int tessera);
 }

@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity // This tells Hibernate to make a table out of this class
-@Table(name="mygrv_user")
+@Table(name="user")
 public class User {
 
     private Long id;

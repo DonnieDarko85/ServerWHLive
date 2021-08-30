@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity // This tells Hibernate to make a table out of this class
-@Table(name="mygrv_pg")
+@Table(name="pg")
 public class PG {
     private Long id;
     private User user;
@@ -13,7 +13,7 @@ public class PG {
     private String race;
     private String faction;
     private int corruptionRank;
-    private int statusRank;
+    private int careerRank;
     private String bg;
     private int status;
     private boolean isPrimary;
@@ -82,13 +82,13 @@ public class PG {
         this.corruptionRank = corruptionRank;
     }
 
-    @Column(name = "status_rank")
-    public int getStatusRank() {
-        return statusRank;
+    @Column(name = "career_rank")
+    public int getCareerRank() {
+        return careerRank;
     }
 
-    public void setStatusRank(int statusRank) {
-        this.statusRank = statusRank;
+    public void setCareerRank(int careerRank) {
+        this.careerRank = careerRank;
     }
 
     public String getBg() {

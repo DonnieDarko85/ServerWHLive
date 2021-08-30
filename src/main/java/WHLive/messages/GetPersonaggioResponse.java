@@ -1,18 +1,26 @@
 package WHLive.messages;
 
 public class GetPersonaggioResponse extends BaseResponse{
+    private Long id;
     private String name;
     private String race;
     private String faction;
     private int status;
     private String imageUrl;
+    private int careerRank;
+    private int corruptionRank;
+    private String bg;
 
-    GetPersonaggioResponse(String name, String race, String faction, int status, String imageUrl){
+    public GetPersonaggioResponse(Long id, String name, String race, String faction, int status, String imageUrl, int careerRank, int corruptionRank, String bg){
+        this.id = id;
         this.name = name;
         this.race = race;
         this.faction = faction;
         this.status = status;
         this.imageUrl = imageUrl;
+        this.careerRank = careerRank;
+        this.corruptionRank = corruptionRank;
+        this.bg = bg;
     }
 
     public String getName() {
@@ -53,5 +61,37 @@ public class GetPersonaggioResponse extends BaseResponse{
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public int getCareerRank() {
+        return careerRank;
+    }
+
+    public void setCareerRank(int careerRank) {
+        this.careerRank = careerRank;
+    }
+
+    public int getCorruptionRank() {
+        return corruptionRank;
+    }
+
+    public void setCorruptionRank(int corruptionRank) {
+        this.corruptionRank = corruptionRank;
+    }
+
+    public String getBg() {
+        return bg;
+    }
+
+    public void setBg(String bg) {
+        this.bg = bg;
     }
 }
