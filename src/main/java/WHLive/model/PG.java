@@ -21,7 +21,8 @@ public class PG {
     private String notes;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @SequenceGenerator(name = "pgSeqGen", sequenceName = "pgSeq", initialValue = 1000, allocationSize = 100)
+    @GeneratedValue(generator = "pgSeqGen")
     public Long getId() {
         return id;
     }

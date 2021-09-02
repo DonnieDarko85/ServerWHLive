@@ -44,6 +44,7 @@ public class MainController {
         //Generate session token save and return it
         String sessionToken = UUID.randomUUID().toString();
         u.setAuthToken(authToken);
+        u.setSessionToken(sessionToken);
         //Set expiration of login token
         Calendar c = new GregorianCalendar();
         c.setTime(new Date());
@@ -54,28 +55,51 @@ public class MainController {
     }
 
     @PostMapping(path="/checkToken")
-    public @ResponseBody
-    CheckTokenResponse checkToken(@RequestBody CheckTokenRequest body) {
+    public @ResponseBody CheckTokenResponse checkToken(@RequestBody CheckTokenRequest body) {
         User u = userRepository.getUserByToken(body.getToken());
         if(u == null) return null;
         //Generate session token save and return it
         String sessionToken = UUID.randomUUID().toString();
+        u.setSessionToken(sessionToken);
+        userRepository.save(u);
         return new CheckTokenResponse(sessionToken, u.getTessera(), u.getFirstName(), u.getLastName());
+    }
+
+    @PostMapping(path="/newPg")
+    public @ResponseBody CreatePGResponse newPg(@RequestBody CreatePGRequest body) {
+        User u = userRepository.getUserBySessionToken(body.getSessionToken());
+        System.out.println(body.getSessionToken());
+        if(u == null) return new CreatePGResponse(-1L, true, "Auth Error!");
+
+        PG oldPg = pgRepository.getActivePgForTessera(u.getTessera());
+        if(oldPg != null){
+            return new CreatePGResponse(-1L, true, "Hai già un PG attivo!");
+        }
+
+        PG newPg = new PG();
+        newPg.setBg(body.getBg());
+        newPg.setFaction(body.getFaction());
+        newPg.setRace(body.getRace());
+        newPg.setName(body.getName());
+        newPg.setUser(u);
+        newPg.setCreationDate(new Date());
+        newPg.setStatus(1);
+        pgRepository.save(newPg);
+
+        return new CreatePGResponse(newPg.getId(), false, "");
     }
 
     @PostMapping(path="/getActivePgForTessera")
     public @ResponseBody GetPersonaggioResponse getActivePgForTessera(@RequestBody GetPersonaggioRequest body) {
         PG pg = pgRepository.getActivePgForTessera(body.getTessera());
-        return new GetPersonaggioResponse(
-                pg.getId(),
-                pg.getName(),
-                pg.getRace(),
-                pg.getFaction(),
-                pg.getStatus(),
-                pg.getImageUrl(),
-                pg.getCareerRank(),
-                pg.getCorruptionRank(),
-                pg.getBg());
+        GetPersonaggioResponse resp = null;
+        if(pg == null) {
+            resp = new GetPersonaggioResponse(0,0L,"","","",0,"",0,0,"");
+        }else{
+            resp = new GetPersonaggioResponse(1,pg.getId(),pg.getName(),pg.getRace(),pg.getFaction(),
+                    pg.getStatus(),pg.getImageUrl(),pg.getCareerRank(),pg.getCorruptionRank(),pg.getBg());
+        }
+        return resp;
     }
 
     @GetMapping(path="/getAllSkills")

@@ -11,4 +11,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT u FROM User u where u.authToken = :token")
     User getUserByToken(String token);
+
+    @Query("SELECT u FROM User u where u.sessionToken = :token")
+    User getUserBySessionToken(String token);
 }

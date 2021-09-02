@@ -1,6 +1,7 @@
 package WHLive.messages;
 
 public class GetPersonaggioResponse extends BaseResponse{
+    private int count;
     private Long id;
     private String name;
     private String race;
@@ -11,7 +12,8 @@ public class GetPersonaggioResponse extends BaseResponse{
     private int corruptionRank;
     private String bg;
 
-    public GetPersonaggioResponse(Long id, String name, String race, String faction, int status, String imageUrl, int careerRank, int corruptionRank, String bg){
+    public GetPersonaggioResponse(int count, Long id, String name, String race, String faction, int status, String imageUrl, int careerRank, int corruptionRank, String bg){
+        this.count = count;
         this.id = id;
         this.name = name;
         this.race = race;
@@ -22,6 +24,8 @@ public class GetPersonaggioResponse extends BaseResponse{
         this.corruptionRank = corruptionRank;
         this.bg = bg;
     }
+
+    public GetPersonaggioResponse(){}
 
     public String getName() {
         return name;
@@ -93,5 +97,13 @@ public class GetPersonaggioResponse extends BaseResponse{
 
     public void setBg(String bg) {
         this.bg = bg;
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
     }
 }

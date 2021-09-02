@@ -17,6 +17,7 @@ public class User {
     private String authToken;
     private Date authExpire;
     private String password;
+    private String sessionToken;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -103,5 +104,14 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    @Column(name = "session_token")
+    public String getSessionToken() {
+        return sessionToken;
+    }
+
+    public void setSessionToken(String sessionToken) {
+        this.sessionToken = sessionToken;
     }
 }
