@@ -18,7 +18,8 @@ public class Skill {
     private String description;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @SequenceGenerator(name = "skillSeqGen", sequenceName = "skillSeq", initialValue = 1000, allocationSize = 100)
+    @GeneratedValue(generator = "skillSeqGen")
     public Long getId() {
         return id;
     }

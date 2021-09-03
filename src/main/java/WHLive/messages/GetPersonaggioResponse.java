@@ -27,6 +27,12 @@ public class GetPersonaggioResponse extends BaseResponse{
 
     public GetPersonaggioResponse(){}
 
+    public GetPersonaggioResponse(Long id, boolean isError, String errorMessage){
+        this.id = id;
+        setIsError(isError);
+        setErrorMessage(errorMessage);
+    }
+
     public String getName() {
         return name;
     }

@@ -1,10 +1,12 @@
 package WHLive.controller;
 
 import WHLive.messages.*;
-import WHLive.model.PG;
+import WHLive.model.Pg;
+import WHLive.model.PgSkill;
 import WHLive.model.Skill;
 import WHLive.model.User;
 import WHLive.repository.PgRepository;
+import WHLive.repository.PgSkillRepository;
 import WHLive.repository.SkillRepository;
 import WHLive.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,8 @@ public class MainController {
     private PgRepository pgRepository;
     @Autowired
     private SkillRepository skillRepository;
+    @Autowired
+    private PgSkillRepository pgSkillRepository;
 
     @GetMapping(path="/soci")
     public @ResponseBody Iterable<User> getAllUsers() {
@@ -68,15 +72,14 @@ public class MainController {
     @PostMapping(path="/newPg")
     public @ResponseBody CreatePGResponse newPg(@RequestBody CreatePGRequest body) {
         User u = userRepository.getUserBySessionToken(body.getSessionToken());
-        System.out.println(body.getSessionToken());
         if(u == null) return new CreatePGResponse(-1L, true, "Auth Error!");
 
-        PG oldPg = pgRepository.getActivePgForTessera(u.getTessera());
+        Pg oldPg = pgRepository.getActivePgForTessera(u.getTessera());
         if(oldPg != null){
-            return new CreatePGResponse(-1L, true, "Hai già un PG attivo!");
+            return new CreatePGResponse(-1L, true, "No more than one active Pg allowed!");
         }
 
-        PG newPg = new PG();
+        Pg newPg = new Pg();
         newPg.setBg(body.getBg());
         newPg.setFaction(body.getFaction());
         newPg.setRace(body.getRace());
@@ -89,9 +92,39 @@ public class MainController {
         return new CreatePGResponse(newPg.getId(), false, "");
     }
 
+    @PostMapping(path="/addSkillToPg")
+    public @ResponseBody AddSkillToPgResponse addSkillToPg(@RequestBody AddSkillToPgRequest body) {
+        User u = userRepository.getUserBySessionToken(body.getSessionToken());
+        if(u == null) return new AddSkillToPgResponse(true, "Auth Error!");
+
+        Pg pg = pgRepository.getActivePgForTessera(u.getTessera());
+        if(pg == null) return new AddSkillToPgResponse(true, "Pg not present!");
+
+        Iterable<Skill> skills = skillRepository.findAllById(body.getSkills());
+        List<PgSkill> newAssociations = new ArrayList<>();
+
+        for (Skill skill : skills) {
+            PgSkill pgSkill = new PgSkill();
+            pgSkill.setAcquireDate(new Date());
+            pgSkill.setSkill(skill);
+            pgSkill.setPg(pg);
+            newAssociations.add(pgSkill);
+        }
+        pgSkillRepository.saveAll(newAssociations);
+        
+        return new AddSkillToPgResponse(false,"");
+    }
+
     @PostMapping(path="/getActivePgForTessera")
     public @ResponseBody GetPersonaggioResponse getActivePgForTessera(@RequestBody GetPersonaggioRequest body) {
-        PG pg = pgRepository.getActivePgForTessera(body.getTessera());
+        System.out.println(body.getSessionToken());
+
+        User u = userRepository.getUserBySessionToken(body.getSessionToken());
+        if(u == null) return new GetPersonaggioResponse(-1L, true, "Auth Error! Invalid token");
+
+        if(u.getTessera() != body.getTessera()) return new GetPersonaggioResponse(-1L, true, "Auth Error! Tessera mismatch");
+
+        Pg pg = pgRepository.getActivePgForTessera(body.getTessera());
         GetPersonaggioResponse resp = null;
         if(pg == null) {
             resp = new GetPersonaggioResponse(0,0L,"","","",0,"",0,0,"");

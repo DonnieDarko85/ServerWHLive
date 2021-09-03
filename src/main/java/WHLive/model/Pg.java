@@ -5,7 +5,7 @@ import java.util.Date;
 
 @Entity // This tells Hibernate to make a table out of this class
 @Table(name="pg")
-public class PG {
+public class Pg {
     private Long id;
     private User user;
     private String name;

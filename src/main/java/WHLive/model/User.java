@@ -20,7 +20,8 @@ public class User {
     private String sessionToken;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @SequenceGenerator(name = "userSeqGen", sequenceName = "userSeq", initialValue = 1000, allocationSize = 100)
+    @GeneratedValue(generator = "userSeqGen")
     public Long getId() {
         return id;
     }
