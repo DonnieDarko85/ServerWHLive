@@ -95,24 +95,26 @@ public class MainController {
     @PostMapping(path="/addSkillToPg")
     public @ResponseBody AddSkillToPgResponse addSkillToPg(@RequestBody AddSkillToPgRequest body) {
         User u = userRepository.getUserBySessionToken(body.getSessionToken());
-        if(u == null) return new AddSkillToPgResponse(true, "Auth Error!");
+        if(u == null) return new AddSkillToPgResponse(true, "Auth Error!", null);
 
         Pg pg = pgRepository.getActivePgForTessera(u.getTessera());
-        if(pg == null) return new AddSkillToPgResponse(true, "Pg not present!");
+        if(pg == null) return new AddSkillToPgResponse(true, "Pg not present!", null);
 
         Iterable<Skill> skills = skillRepository.findAllById(body.getSkills());
-        List<PgSkill> newAssociations = new ArrayList<>();
-
         for (Skill skill : skills) {
-            PgSkill pgSkill = new PgSkill();
-            pgSkill.setAcquireDate(new Date());
-            pgSkill.setSkill(skill);
-            pgSkill.setPg(pg);
-            newAssociations.add(pgSkill);
+            pg.getSkills().add(skill);
         }
-        pgSkillRepository.saveAll(newAssociations);
-        
-        return new AddSkillToPgResponse(false,"");
+        pgRepository.save(pg);
+
+        return new AddSkillToPgResponse(false,"", getSkillsIds(pg));
+    }
+
+    private List<Long> getSkillsIds(Pg pg) {
+        List<Long> skillsId = new ArrayList<>();
+        for (Skill s: pg.getSkills()) {
+            skillsId.add(s.getId());
+        }
+        return skillsId;
     }
 
     @PostMapping(path="/getActivePgForTessera")
@@ -127,10 +129,10 @@ public class MainController {
         Pg pg = pgRepository.getActivePgForTessera(body.getTessera());
         GetPersonaggioResponse resp = null;
         if(pg == null) {
-            resp = new GetPersonaggioResponse(0,0L,"","","",0,"",0,0,"");
+            resp = new GetPersonaggioResponse(0,0L,"","","",0,"",0,0,"", null);
         }else{
             resp = new GetPersonaggioResponse(1,pg.getId(),pg.getName(),pg.getRace(),pg.getFaction(),
-                    pg.getStatus(),pg.getImageUrl(),pg.getCareerRank(),pg.getCorruptionRank(),pg.getBg());
+                    pg.getStatus(),pg.getImageUrl(),pg.getCareerRank(),pg.getCorruptionRank(),pg.getBg(), getSkillsIds(pg));
         }
         return resp;
     }

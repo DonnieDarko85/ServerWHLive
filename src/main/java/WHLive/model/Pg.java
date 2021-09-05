@@ -2,6 +2,7 @@ package WHLive.model;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity // This tells Hibernate to make a table out of this class
 @Table(name="pg")
@@ -19,6 +20,7 @@ public class Pg {
     private boolean isPrimary;
     private String imageUrl;
     private String notes;
+    private List<Skill> skills;
 
     @Id
     @SequenceGenerator(name = "pgSeqGen", sequenceName = "pgSeq", initialValue = 1000, allocationSize = 100)
@@ -132,5 +134,18 @@ public class Pg {
 
     public void setNotes(String notes) {
         this.notes = notes;
+    }
+
+    @ManyToMany
+    @JoinTable(
+            name = "pg_skill",
+            joinColumns = @JoinColumn(name = "pg_id"),
+            inverseJoinColumns = @JoinColumn(name = "skill_id"))
+    public List<Skill> getSkills() {
+        return skills;
+    }
+
+    public void setSkills(List<Skill> skills) {
+        this.skills = skills;
     }
 }

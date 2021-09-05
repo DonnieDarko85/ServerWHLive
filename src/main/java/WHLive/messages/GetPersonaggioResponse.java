@@ -1,5 +1,7 @@
 package WHLive.messages;
 
+import java.util.List;
+
 public class GetPersonaggioResponse extends BaseResponse{
     private int count;
     private Long id;
@@ -11,8 +13,9 @@ public class GetPersonaggioResponse extends BaseResponse{
     private int careerRank;
     private int corruptionRank;
     private String bg;
+    private List<Long> skills;
 
-    public GetPersonaggioResponse(int count, Long id, String name, String race, String faction, int status, String imageUrl, int careerRank, int corruptionRank, String bg){
+    public GetPersonaggioResponse(int count, Long id, String name, String race, String faction, int status, String imageUrl, int careerRank, int corruptionRank, String bg, List<Long> skills){
         this.count = count;
         this.id = id;
         this.name = name;
@@ -23,6 +26,7 @@ public class GetPersonaggioResponse extends BaseResponse{
         this.careerRank = careerRank;
         this.corruptionRank = corruptionRank;
         this.bg = bg;
+        this.skills = skills;
     }
 
     public GetPersonaggioResponse(){}
@@ -111,5 +115,13 @@ public class GetPersonaggioResponse extends BaseResponse{
 
     public void setCount(int count) {
         this.count = count;
+    }
+
+    public List<Long> getSkills() {
+        return skills;
+    }
+
+    public void setSkills(List<Long> skills) {
+        this.skills = skills;
     }
 }
