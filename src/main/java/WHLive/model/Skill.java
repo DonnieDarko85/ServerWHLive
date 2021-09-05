@@ -11,11 +11,11 @@ public class Skill {
     private String name;
     private Integer cost;
     private Integer rank;
-    private Integer career;
-    private Integer mastery;
-    private Integer style;
-    private Integer advanced;
-    private Integer supreme;
+    private boolean career;
+    private boolean mastery;
+    private boolean style;
+    private boolean advanced;
+    private boolean supreme;
     private String description;
     private List<Pg> pgs;
 
@@ -54,43 +54,43 @@ public class Skill {
         this.rank = rank;
     }
 
-    public Integer getCareer() {
+    public boolean getCareer() {
         return career;
     }
 
-    public void setCareer(Integer career) {
+    public void setCareer(boolean career) {
         this.career = career;
     }
 
-    public Integer getMastery() {
+    public boolean getMastery() {
         return mastery;
     }
 
-    public void setMastery(Integer mastery) {
+    public void setMastery(boolean mastery) {
         this.mastery = mastery;
     }
 
-    public Integer getStyle() {
+    public boolean getStyle() {
         return style;
     }
 
-    public void setStyle(Integer style) {
+    public void setStyle(boolean style) {
         this.style = style;
     }
 
-    public Integer getAdvanced() {
+    public boolean getAdvanced() {
         return advanced;
     }
 
-    public void setAdvanced(Integer advanced) {
+    public void setAdvanced(boolean advanced) {
         this.advanced = advanced;
     }
 
-    public Integer getSupreme() {
+    public boolean getSupreme() {
         return supreme;
     }
 
-    public void setSupreme(Integer supreme) {
+    public void setSupreme(boolean supreme) {
         this.supreme = supreme;
     }
 
