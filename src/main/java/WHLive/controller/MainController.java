@@ -10,6 +10,7 @@ import WHLive.repository.PgSkillRepository;
 import WHLive.repository.SkillRepository;
 import WHLive.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +19,7 @@ import java.util.*;
 @RestController
 @CrossOrigin(origins = "http://localhost:8081")
 @RequestMapping("/api")
+@SpringBootApplication
 public class MainController {
 
     @Autowired
