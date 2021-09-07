@@ -39,6 +39,7 @@ public class MainController {
     @PostMapping(path="/login")
     public @ResponseBody LoginResponse login(@RequestBody LoginRequest body) {
         //Get user
+        System.out.println("Login: " + body.getTessera());
         User u = userRepository.getUserByTessera(Integer.parseInt(body.getTessera()));
         //TODO THIS IS BULLISH!
         //Chek password
@@ -62,6 +63,7 @@ public class MainController {
 
     @PostMapping(path="/checkToken")
     public @ResponseBody CheckTokenResponse checkToken(@RequestBody CheckTokenRequest body) {
+        System.out.println("Token: " + body.getToken());
         User u = userRepository.getUserByToken(body.getToken());
         if(u == null) return null;
         //Generate session token save and return it
@@ -121,8 +123,6 @@ public class MainController {
 
     @PostMapping(path="/getActivePgForTessera")
     public @ResponseBody GetPersonaggioResponse getActivePgForTessera(@RequestBody GetPersonaggioRequest body) {
-        System.out.println(body.getSessionToken());
-
         User u = userRepository.getUserBySessionToken(body.getSessionToken());
         if(u == null) return new GetPersonaggioResponse(-1L, true, "Auth Error! Invalid token");
 
