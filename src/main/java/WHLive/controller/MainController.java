@@ -2,7 +2,6 @@ package WHLive.controller;
 
 import WHLive.messages.*;
 import WHLive.model.Pg;
-import WHLive.model.PgSkill;
 import WHLive.model.Skill;
 import WHLive.model.User;
 import WHLive.repository.PgRepository;
@@ -31,16 +30,31 @@ public class MainController {
     @Autowired
     private PgSkillRepository pgSkillRepository;
 
-    @GetMapping(path="/soci")
-    public @ResponseBody Iterable<User> getAllUsers() {
-        return userRepository.findAll(Sort.by(Sort.Direction.ASC, "tessera"));
+    @PostMapping(path="/allUsers")
+    public @ResponseBody GetAllUsersResponse getAllUsers(@RequestBody BaseRequest body) {
+        System.out.println(new Date() + " *** ACTIVITY **** getAllUsers: " + body.getSessionToken());
+        User u = userRepository.getUserBySessionToken(body.getSessionToken());
+        if(u == null) return new GetAllUsersResponse(true, "Auth Error!");
+        System.out.println(new Date() + " *** AUTH USER **** getAllUsers: " + u);
+        updateSessionExpireOnActivity(u);
+        return new GetAllUsersResponse(userRepository.findAll(Sort.by(Sort.Direction.ASC, "tessera")));
+    }
+
+    private void updateSessionExpireOnActivity(User u) {
+        Calendar c = new GregorianCalendar();
+        c.setTime(new Date());
+        c.add(Calendar.HOUR, 1);
+        u.setSessionExpire(c.getTime());
+        userRepository.save(u);
     }
 
     @PostMapping(path="/login")
     public @ResponseBody LoginResponse login(@RequestBody LoginRequest body) {
         //Get user
-        System.out.println("Login: " + body.getTessera());
+        System.out.println(new Date() + " *** ACTIVITY **** Login: " + body.getTessera());
         User u = userRepository.getUserByTessera(Integer.parseInt(body.getTessera()));
+        if(u == null) return new LoginResponse(true, "Auth Error!");
+        System.out.println(new Date() + " *** AUTH USER **** Login: " + u);
         //TODO THIS IS BULLISH!
         //Chek password
         if(!u.getPassword().equals(body.getPassword())){
@@ -57,26 +71,31 @@ public class MainController {
         c.setTime(new Date());
         c.add(Calendar.DAY_OF_YEAR, 30);
         u.setAuthExpire(c.getTime());
+        updateSessionExpireOnActivity(u);
         userRepository.save(u);
         return new LoginResponse(authToken, sessionToken, u.getTessera(), u.getFirstName(), u.getLastName());
     }
 
     @PostMapping(path="/checkToken")
     public @ResponseBody CheckTokenResponse checkToken(@RequestBody CheckTokenRequest body) {
-        System.out.println("Token: " + body.getToken());
+        System.out.println(new Date() + " *** ACTIVITY **** Check auth token: " + body.getToken());
         User u = userRepository.getUserByToken(body.getToken());
-        if(u == null) return null;
+        if(u == null) return new CheckTokenResponse(true, "Auth Error!");
+        System.out.println(new Date() + " *** AUTH USER **** Check auth token: " + u);
         //Generate session token save and return it
         String sessionToken = UUID.randomUUID().toString();
         u.setSessionToken(sessionToken);
+        updateSessionExpireOnActivity(u);
         userRepository.save(u);
         return new CheckTokenResponse(sessionToken, u.getTessera(), u.getFirstName(), u.getLastName());
     }
 
     @PostMapping(path="/newPg")
     public @ResponseBody CreatePGResponse newPg(@RequestBody CreatePGRequest body) {
+        System.out.println(new Date() + " *** ACTIVITY **** newPg: " + body.getSessionToken());
         User u = userRepository.getUserBySessionToken(body.getSessionToken());
         if(u == null) return new CreatePGResponse(-1L, true, "Auth Error!");
+        System.out.println(new Date() + " *** AUTH USER **** newPg: " + u);
 
         Pg oldPg = pgRepository.getActivePgForTessera(u.getTessera());
         if(oldPg != null){
@@ -98,8 +117,10 @@ public class MainController {
 
     @PostMapping(path="/addSkillToPg")
     public @ResponseBody AddSkillToPgResponse addSkillToPg(@RequestBody AddSkillToPgRequest body) {
+        System.out.println(new Date() + " *** ACTIVITY **** addSkillToPg: " + body.getSessionToken());
         User u = userRepository.getUserBySessionToken(body.getSessionToken());
         if(u == null) return new AddSkillToPgResponse(true, "Auth Error!", null);
+        System.out.println(new Date() + " *** AUTH USER **** addSkillToPg: " + u);
 
         Pg pg = pgRepository.getActivePgForTessera(u.getTessera());
         if(pg == null) return new AddSkillToPgResponse(true, "Pg not present!", null);
@@ -123,8 +144,10 @@ public class MainController {
 
     @PostMapping(path="/getActivePgForTessera")
     public @ResponseBody GetPersonaggioResponse getActivePgForTessera(@RequestBody GetPersonaggioRequest body) {
+        System.out.println(new Date() + " *** ACTIVITY **** getAllUsers: " + body.getSessionToken());
         User u = userRepository.getUserBySessionToken(body.getSessionToken());
         if(u == null) return new GetPersonaggioResponse(-1L, true, "Auth Error! Invalid token");
+        System.out.println(new Date() + " *** AUTH USER **** getAllUsers: " + u);
 
         if(u.getTessera() != body.getTessera()) return new GetPersonaggioResponse(-1L, true, "Auth Error! Tessera mismatch");
 
@@ -139,8 +162,34 @@ public class MainController {
         return resp;
     }
 
-    @GetMapping(path="/getAllSkills")
-    public @ResponseBody Iterable<Skill> getAllSkills() {
-        return skillRepository.getAllSkills();
+    @PostMapping(path="/getAllSkills")
+    public @ResponseBody GetAllSkillResponse getAllSkills(@RequestBody BaseRequest body) {
+        System.out.println(new Date() + " *** ACTIVITY **** getAllSkills: " + body.getSessionToken());
+        User u = userRepository.getUserBySessionToken(body.getSessionToken());
+        if(u == null) return new GetAllSkillResponse(true, "Auth Error! Invalid token");
+        System.out.println(new Date() + " *** AUTH USER **** getAllSkills: " + u);
+
+        return new GetAllSkillResponse(skillRepository.findAll());
+    }
+
+    @PostMapping(path="/editSkill")
+    public @ResponseBody EditSkillResponse editSkill(@RequestBody EditSkillRequest body) {
+        System.out.println(new Date() + " *** ACTIVITY **** getAllUsers: " + body.getSessionToken());
+        User u = userRepository.getUserBySessionToken(body.getSessionToken());
+        if(u == null) return new EditSkillResponse(true, "Auth Error! Invalid token");
+        System.out.println(new Date() + " *** AUTH USER **** editSkill: " + u);
+        Optional<Skill> maybeSkill = skillRepository.findById(body.getId());
+        if(!maybeSkill.isPresent()) return new EditSkillResponse(true, "Skill does not exist!");
+        Skill s= maybeSkill.get();
+        //s.setAdvanced(body.isAdvanced());
+        //s.setCareer(body.isCareer());
+        s.setCost(body.getCost());
+        s.setName(body.getName());
+        //s.setSupreme(body.isSupreme());
+        //s.setStyle(body.isStyle());
+        s.setDescription(body.getDescription());
+        skillRepository.save(s);
+
+        return new EditSkillResponse(skillRepository.findAll());
     }
 }

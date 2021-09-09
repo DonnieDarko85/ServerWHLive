@@ -1,7 +1,9 @@
 package WHLive.messages;
 
-public abstract class BaseRequest {
+public class BaseRequest {
     private String sessionToken;
+
+    BaseRequest(){}
 
     public String getSessionToken() {
         return sessionToken;

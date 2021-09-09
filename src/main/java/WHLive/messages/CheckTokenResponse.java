@@ -13,6 +13,11 @@ public class CheckTokenResponse extends BaseResponse{
         this.lastName= lastName;
     }
 
+    public CheckTokenResponse(boolean isError, String errorMessage) {
+        setIsError(isError);
+        setErrorMessage(errorMessage);
+    }
+
     public String getSessionToken() {
         return sessionToken;
     }

@@ -15,6 +15,11 @@ public class LoginResponse extends BaseResponse{
         this.sessionToken = sessionToken;
     }
 
+    public LoginResponse(boolean isError, String errorMessage){
+        setIsError(isError);
+        setErrorMessage(errorMessage);
+    }
+
     public String getAuthToken() {
         return authToken;
     }

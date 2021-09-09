@@ -18,6 +18,7 @@ public class User {
     private Date authExpire;
     private String password;
     private String sessionToken;
+    private Date sessionExpire;
 
     @Id
     @SequenceGenerator(name = "userSeqGen", sequenceName = "userSeq", initialValue = 1000, allocationSize = 100)
@@ -114,5 +115,19 @@ public class User {
 
     public void setSessionToken(String sessionToken) {
         this.sessionToken = sessionToken;
+    }
+
+    @Column(name = "session_expire")
+    public Date getSessionExpire() {
+        return sessionExpire;
+    }
+
+    public void setSessionExpire(Date sessionExpire) {
+        this.sessionExpire = sessionExpire;
+    }
+
+    @Override
+    public String toString(){
+        return this.tessera +" - " + this.firstName + " " +this.lastName;
     }
 }

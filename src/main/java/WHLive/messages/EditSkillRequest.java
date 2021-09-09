@@ -1,14 +1,9 @@
-package WHLive.model;
+package WHLive.messages;
 
-import javax.persistence.*;
-
-@Entity // This tells Hibernate to make a table out of this class
-@Table(name = "skill")
-public class Skill {
+public class EditSkillRequest extends BaseRequest {
     private Long id;
     private String name;
-    private Integer cost;
-    private Integer rank;
+    private int cost;
     private boolean career;
     private boolean mastery;
     private boolean style;
@@ -16,9 +11,9 @@ public class Skill {
     private boolean supreme;
     private String description;
 
-    @Id
-    @SequenceGenerator(name = "skillSeqGen", sequenceName = "skillSeq", initialValue = 1000, allocationSize = 100)
-    @GeneratedValue(generator = "skillSeqGen")
+    EditSkillRequest() {
+    }
+
     public Long getId() {
         return id;
     }
@@ -35,24 +30,15 @@ public class Skill {
         this.name = name;
     }
 
-    public Integer getCost() {
+    public int getCost() {
         return cost;
     }
 
-    public void setCost(Integer cost) {
+    public void setCost(int cost) {
         this.cost = cost;
     }
 
-    @Column(name = "skill_rank")
-    public Integer getRank() {
-        return rank;
-    }
-
-    public void setRank(Integer rank) {
-        this.rank = rank;
-    }
-
-    public boolean getCareer() {
+    public boolean isCareer() {
         return career;
     }
 
@@ -60,7 +46,7 @@ public class Skill {
         this.career = career;
     }
 
-    public boolean getMastery() {
+    public boolean isMastery() {
         return mastery;
     }
 
@@ -68,7 +54,7 @@ public class Skill {
         this.mastery = mastery;
     }
 
-    public boolean getStyle() {
+    public boolean isStyle() {
         return style;
     }
 
@@ -76,7 +62,7 @@ public class Skill {
         this.style = style;
     }
 
-    public boolean getAdvanced() {
+    public boolean isAdvanced() {
         return advanced;
     }
 
@@ -84,7 +70,7 @@ public class Skill {
         this.advanced = advanced;
     }
 
-    public boolean getSupreme() {
+    public boolean isSupreme() {
         return supreme;
     }
 
