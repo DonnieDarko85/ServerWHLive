@@ -174,20 +174,23 @@ public class MainController {
 
     @PostMapping(path="/editSkill")
     public @ResponseBody EditSkillResponse editSkill(@RequestBody EditSkillRequest body) {
-        System.out.println(new Date() + " *** ACTIVITY **** getAllUsers: " + body.getSessionToken());
+        System.out.println(new Date() + " *** ACTIVITY **** editSkill: " + body.getSessionToken());
         User u = userRepository.getUserBySessionToken(body.getSessionToken());
         if(u == null) return new EditSkillResponse(true, "Auth Error! Invalid token");
         System.out.println(new Date() + " *** AUTH USER **** editSkill: " + u);
+
         Optional<Skill> maybeSkill = skillRepository.findById(body.getId());
         if(!maybeSkill.isPresent()) return new EditSkillResponse(true, "Skill does not exist!");
+
         Skill s= maybeSkill.get();
-        //s.setAdvanced(body.isAdvanced());
-        //s.setCareer(body.isCareer());
+        s.setAdvanced(body.isAdvanced());
+        s.setCareer(body.isCareer());
         s.setCost(body.getCost());
         s.setName(body.getName());
-        //s.setSupreme(body.isSupreme());
-        //s.setStyle(body.isStyle());
+        s.setSupreme(body.isSupreme());
+        s.setStyle(body.isStyle());
         s.setDescription(body.getDescription());
+        s.setMastery(body.isMastery());
         skillRepository.save(s);
 
         return new EditSkillResponse(skillRepository.findAll());
