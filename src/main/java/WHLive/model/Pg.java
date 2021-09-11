@@ -23,7 +23,7 @@ public class Pg {
     private List<Skill> skills;
 
     @Id
-    @SequenceGenerator(name = "pgSeqGen", sequenceName = "pgSeq", initialValue = 1000, allocationSize = 100)
+    @SequenceGenerator(name = "pgSeqGen", sequenceName = "pgSeq", initialValue = 1000, allocationSize = 1)
     @GeneratedValue(generator = "pgSeqGen")
     public Long getId() {
         return id;

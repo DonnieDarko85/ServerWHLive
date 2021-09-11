@@ -21,7 +21,7 @@ public class User {
     private Date sessionExpire;
 
     @Id
-    @SequenceGenerator(name = "userSeqGen", sequenceName = "userSeq", initialValue = 1000, allocationSize = 100)
+    @SequenceGenerator(name = "userSeqGen", sequenceName = "userSeq", initialValue = 1000, allocationSize = 1)
     @GeneratedValue(generator = "userSeqGen")
     public Long getId() {
         return id;

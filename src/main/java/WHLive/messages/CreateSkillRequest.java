@@ -1,7 +1,6 @@
 package WHLive.messages;
 
-public class EditSkillRequest extends BaseRequest {
-    private Long id;
+public class CreateSkillRequest extends BaseRequest {
     private String name;
     private int cost;
     private boolean career;
@@ -16,15 +15,7 @@ public class EditSkillRequest extends BaseRequest {
     private boolean alchemyRecipe;
     private boolean rune;
 
-    EditSkillRequest() {
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+    CreateSkillRequest() {
     }
 
     public String getName() {

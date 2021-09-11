@@ -14,10 +14,14 @@ public class Skill {
     private boolean style;
     private boolean advanced;
     private boolean supreme;
+    private boolean arcaneSpell;
+    private boolean divineSpell;
+    private boolean alchemyRecipe;
+    private boolean rune;
     private String description;
 
     @Id
-    @SequenceGenerator(name = "skillSeqGen", sequenceName = "skillSeq", initialValue = 1000, allocationSize = 100)
+    @SequenceGenerator(name = "skillSeqGen", sequenceName = "skillSeq", initialValue = 1000, allocationSize = 1)
     @GeneratedValue(generator = "skillSeqGen")
     public Long getId() {
         return id;
@@ -52,51 +56,87 @@ public class Skill {
         this.rank = rank;
     }
 
-    public boolean getCareer() {
+    public boolean isCareer() {
         return career;
+    }
+
+    public boolean isMastery() {
+        return mastery;
+    }
+
+    @Column(name = "combat_style")
+    public boolean isStyle() {
+        return style;
+    }
+
+    public boolean isAdvanced() {
+        return advanced;
+    }
+
+    public boolean isSupreme() {
+        return supreme;
     }
 
     public void setCareer(boolean career) {
         this.career = career;
     }
 
-    public boolean getMastery() {
-        return mastery;
-    }
-
     public void setMastery(boolean mastery) {
         this.mastery = mastery;
-    }
-
-    public boolean getStyle() {
-        return style;
     }
 
     public void setStyle(boolean style) {
         this.style = style;
     }
 
-    public boolean getAdvanced() {
-        return advanced;
-    }
-
     public void setAdvanced(boolean advanced) {
         this.advanced = advanced;
-    }
-
-    public boolean getSupreme() {
-        return supreme;
     }
 
     public void setSupreme(boolean supreme) {
         this.supreme = supreme;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Column(name = "arcane_spell")
+    public boolean isArcaneSpell() {
+        return arcaneSpell;
+    }
+
+    public void setArcaneSpell(boolean arcaneSpell) {
+        this.arcaneSpell = arcaneSpell;
+    }
+
+    @Column(name = "divine_spell")
+    public boolean isDivineSpell() {
+        return divineSpell;
+    }
+
+    public void setDivineSpell(boolean divineSpell) {
+        this.divineSpell = divineSpell;
+    }
+
+    @Column(name = "alchemy_recipe")
+    public boolean isAlchemyRecipe() {
+        return alchemyRecipe;
+    }
+
+    public void setAlchemyRecipe(boolean alchemyRecipe) {
+        this.alchemyRecipe = alchemyRecipe;
+    }
+
+    public boolean isRune() {
+        return rune;
+    }
+
+    public void setRune(boolean rune) {
+        this.rune = rune;
+    }
+
+    public String getDescription() {
+        return description;
     }
 }

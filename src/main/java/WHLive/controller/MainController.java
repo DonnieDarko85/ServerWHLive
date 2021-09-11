@@ -144,10 +144,10 @@ public class MainController {
 
     @PostMapping(path="/getActivePgForTessera")
     public @ResponseBody GetPersonaggioResponse getActivePgForTessera(@RequestBody GetPersonaggioRequest body) {
-        System.out.println(new Date() + " *** ACTIVITY **** getAllUsers: " + body.getSessionToken());
+        System.out.println(new Date() + " *** ACTIVITY **** getActivePgForTessera: " + body.getSessionToken());
         User u = userRepository.getUserBySessionToken(body.getSessionToken());
         if(u == null) return new GetPersonaggioResponse(-1L, true, "Auth Error! Invalid token");
-        System.out.println(new Date() + " *** AUTH USER **** getAllUsers: " + u);
+        System.out.println(new Date() + " *** AUTH USER **** getActivePgForTessera: " + u);
 
         if(u.getTessera() != body.getTessera()) return new GetPersonaggioResponse(-1L, true, "Auth Error! Tessera mismatch");
 
@@ -182,7 +182,7 @@ public class MainController {
         Optional<Skill> maybeSkill = skillRepository.findById(body.getId());
         if(!maybeSkill.isPresent()) return new EditSkillResponse(true, "Skill does not exist!");
 
-        Skill s= maybeSkill.get();
+        Skill s = maybeSkill.get();
         s.setAdvanced(body.isAdvanced());
         s.setCareer(body.isCareer());
         s.setCost(body.getCost());
@@ -191,8 +191,46 @@ public class MainController {
         s.setStyle(body.isStyle());
         s.setDescription(body.getDescription());
         s.setMastery(body.isMastery());
-        skillRepository.save(s);
-
+        s.setRank(body.getRank());
+        s.setAlchemyRecipe(body.isAlchemyRecipe());
+        s.setRune(body.isRune());
+        s.setDivineSpell(body.isDivineSpell());
+        s.setArcaneSpell(body.isArcaneSpell());
+        try {
+            skillRepository.save(s);
+        }catch(Exception e){
+            return new EditSkillResponse(true, e.getMessage());
+        }
         return new EditSkillResponse(skillRepository.findAll());
+    }
+
+    @PostMapping(path="/createSkill")
+    public @ResponseBody CreateSkillResponse createSkill(@RequestBody CreateSkillRequest body) {
+        System.out.println(new Date() + " *** ACTIVITY **** createSkill: " + body.getSessionToken());
+        User u = userRepository.getUserBySessionToken(body.getSessionToken());
+        if(u == null) return new CreateSkillResponse(true, "Auth Error! Invalid token");
+        System.out.println(new Date() + " *** AUTH USER **** createSkill: " + u);
+
+        Skill s = new Skill();
+        s.setAdvanced(body.isAdvanced());
+        s.setCareer(body.isCareer());
+        s.setCost(body.getCost());
+        s.setName(body.getName());
+        s.setSupreme(body.isSupreme());
+        s.setStyle(body.isStyle());
+        s.setDescription(body.getDescription());
+        s.setMastery(body.isMastery());
+        s.setRank(body.getRank());
+        s.setAlchemyRecipe(body.isAlchemyRecipe());
+        s.setRune(body.isRune());
+        s.setDivineSpell(body.isDivineSpell());
+        s.setArcaneSpell(body.isArcaneSpell());
+        try {
+            skillRepository.save(s);
+            skillRepository.flush();
+        }catch(Exception e){
+            return new CreateSkillResponse(true, e.getMessage());
+        }
+        return new CreateSkillResponse(skillRepository.findAll());
     }
 }

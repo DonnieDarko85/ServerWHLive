@@ -9,8 +9,8 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.example</groupId>
-	<artifactId>ServerWHLive</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<artifactId>whServer</artifactId>
+	<version>1</version>
 	<name>ServerWHLive</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
@@ -37,6 +37,7 @@
 		</dependency>
 	</dependencies>
 	<build>
+		<finalName>whServer</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

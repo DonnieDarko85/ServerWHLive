@@ -14,7 +14,7 @@ public class PgSkill {
     private Date acquireDate;
 
     @Id
-    @SequenceGenerator(name = "pgSkillSeqGen", sequenceName = "pgSkillSeq", initialValue = 1000, allocationSize = 100)
+    @SequenceGenerator(name = "pgSkillSeqGen", sequenceName = "pgSkillSeq", initialValue = 1000, allocationSize = 1)
     @GeneratedValue(generator = "pgSkillSeqGen")
     public Long getId() {
         return id;
