@@ -154,10 +154,10 @@ public class MainController {
         Pg pg = pgRepository.getActivePgForTessera(body.getTessera());
         GetPersonaggioResponse resp = null;
         if(pg == null) {
-            resp = new GetPersonaggioResponse(0,0L,"","","",0,"",0,0,"", null);
+            resp = new GetPersonaggioResponse(0,0L,"","","",0,"",0,0,"", null, 0);
         }else{
             resp = new GetPersonaggioResponse(1,pg.getId(),pg.getName(),pg.getRace(),pg.getFaction(),
-                    pg.getStatus(),pg.getImageUrl(),pg.getCareerRank(),pg.getCorruptionRank(),pg.getBg(), getSkillsIds(pg));
+                    pg.getStatus(),pg.getImageUrl(),pg.getCareerRank(),pg.getCorruptionRank(),pg.getBg(), getSkillsIds(pg), pg.getPab());
         }
         return resp;
     }

@@ -14,8 +14,9 @@ public class GetPersonaggioResponse extends BaseResponse{
     private int corruptionRank;
     private String bg;
     private List<Long> skills;
+    private int pab;
 
-    public GetPersonaggioResponse(int count, Long id, String name, String race, String faction, int status, String imageUrl, int careerRank, int corruptionRank, String bg, List<Long> skills){
+    public GetPersonaggioResponse(int count, Long id, String name, String race, String faction, int status, String imageUrl, int careerRank, int corruptionRank, String bg, List<Long> skills, int pab){
         this.count = count;
         this.id = id;
         this.name = name;
@@ -27,6 +28,7 @@ public class GetPersonaggioResponse extends BaseResponse{
         this.corruptionRank = corruptionRank;
         this.bg = bg;
         this.skills = skills;
+        this.pab = pab;
     }
 
     public GetPersonaggioResponse(){}
@@ -123,5 +125,13 @@ public class GetPersonaggioResponse extends BaseResponse{
 
     public void setSkills(List<Long> skills) {
         this.skills = skills;
+    }
+
+    public int getPab() {
+        return pab;
+    }
+
+    public void setPab(int pab) {
+        this.pab = pab;
     }
 }

@@ -8,6 +8,7 @@ import java.util.List;
 @Table(name="pg")
 public class Pg {
     private Long id;
+    private int pab;
     private User user;
     private String name;
     private Date creationDate;
@@ -147,5 +148,13 @@ public class Pg {
 
     public void setSkills(List<Skill> skills) {
         this.skills = skills;
+    }
+
+    public int getPab() {
+        return pab;
+    }
+
+    public void setPab(int pab) {
+        this.pab = pab;
     }
 }
