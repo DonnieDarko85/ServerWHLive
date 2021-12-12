@@ -3,11 +3,9 @@ package WHLive.controller;
 import WHLive.messages.*;
 import WHLive.model.Pg;
 import WHLive.model.Skill;
+import WHLive.model.Subscription;
 import WHLive.model.User;
-import WHLive.repository.PgRepository;
-import WHLive.repository.PgSkillRepository;
-import WHLive.repository.SkillRepository;
-import WHLive.repository.UserRepository;
+import WHLive.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.domain.Sort;
@@ -29,6 +27,8 @@ public class MainController {
     private SkillRepository skillRepository;
     @Autowired
     private PgSkillRepository pgSkillRepository;
+    @Autowired
+    private SubscriptionRepository subscriptionRepository;
 
     @PostMapping(path="/allUsers")
     public @ResponseBody GetAllUsersResponse getAllUsers(@RequestBody BaseRequest body) {
@@ -232,5 +232,47 @@ public class MainController {
             return new CreateSkillResponse(true, e.getMessage());
         }
         return new CreateSkillResponse(skillRepository.findAll());
+    }
+
+    @PostMapping(path="/subscribe")
+    public @ResponseBody SubscribeResponse subscribeToEvent(@RequestBody SubscribeRequest body) {
+        System.out.println(new Date() + " *** ACTIVITY **** subscribeToEvent: " + body.getSessionToken());
+        User u = userRepository.getUserBySessionToken(body.getSessionToken());
+        if(u == null) return new SubscribeResponse(true, "Auth Error!");
+        System.out.println(new Date() + " *** AUTH USER **** subscribeToEvent: " + u);
+
+        Subscription s = subscriptionRepository.getSubscriptionByTessera(u.getTessera());
+        if(s != null){
+            System.out.println(new Date() + " *** ERROR **** subscribeToEvent: " + u);
+            return new SubscribeResponse(true, "Already Subscribed!");
+        }
+
+        s = new Subscription();
+        s.setTessera(u.getTessera());
+        s.setDinner1(body.isDinner1());
+        s.setDinner2(body.isDinner2());
+        s.setDinner3(body.isDinner3());
+        s.setFull(body.isFull());
+        s.setPremadePg(body.isPremadePg());
+
+        try {
+            subscriptionRepository.save(s);
+            subscriptionRepository.flush();
+        }catch(Exception e){
+            return new SubscribeResponse(true, e.getMessage());
+        }
+
+        return new SubscribeResponse(false,"");
+    }
+
+    @PostMapping(path="/isUserSubscribed")
+    public @ResponseBody IsUserSubscribedResponse isUserSubscribed(@RequestBody IsUserSubscribedRequest body) {
+        System.out.println(new Date() + " *** ACTIVITY **** isUserSubscribed: " + body.getSessionToken());
+        User u = userRepository.getUserBySessionToken(body.getSessionToken());
+        if(u == null) return new IsUserSubscribedResponse(true, "Auth Error!");
+        System.out.println(new Date() + " *** AUTH USER **** isUserSubscribed: " + u);
+
+        Subscription s = subscriptionRepository.getSubscriptionByTessera(u.getTessera());
+        return new IsUserSubscribedResponse(s != null);
     }
 }
