@@ -6,16 +6,25 @@ import WHLive.model.Skill;
 import WHLive.model.Subscription;
 import WHLive.model.User;
 import WHLive.repository.*;
+import com.google.common.hash.Hashing;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.domain.Sort;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.*;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Properties;
+import javax.mail.*;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 
 import java.util.*;
 
+//@CrossOrigin(origins = "http://localhost:8081")
 @RestController
-@CrossOrigin(origins = "http://localhost:8081")
-@RequestMapping("/api")
+@CrossOrigin(origins = {"*"})
+@RequestMapping({"/api"})
 @SpringBootApplication
 public class MainController {
 
@@ -29,6 +38,8 @@ public class MainController {
     private PgSkillRepository pgSkillRepository;
     @Autowired
     private SubscriptionRepository subscriptionRepository;
+    @Autowired
+    private JavaMailSender emailSender;
 
     @PostMapping(path="/allUsers")
     public @ResponseBody GetAllUsersResponse getAllUsers(@RequestBody BaseRequest body) {
@@ -274,5 +285,85 @@ public class MainController {
 
         Subscription s = subscriptionRepository.getSubscriptionByTessera(u.getTessera());
         return new IsUserSubscribedResponse(s != null);
+    }
+
+    @PostMapping(path="/recoverPass")
+    public @ResponseBody RecoverPassResponse recoverPass(@RequestBody RecoverPassRequest body) {
+        System.out.println(new Date() + " *** ACTIVITY **** recoverPass: " + body.getTessera());
+        User u = userRepository.getUserByTessera(Integer.parseInt(body.getTessera()));
+        if(u == null) return new RecoverPassResponse(true, "Auth Error!");
+        System.out.println(new Date() + " *** AUTH USER **** isUserSubscribed: " + u);
+        if(u.getEmail() == null) return new RecoverPassResponse(true, "No Email Set!");
+
+        String newPass = alphaNumericString(10);
+
+        final String from = "mygrvnoreply@gmail.com"; // change accordingly
+        final String password = "caccolona1125!"; // change accordingly
+        String to = u.getEmail(); // change accordingly
+        String host = "smtp.gmail.com"; // or IP address
+
+        // Get system properties
+        Properties properties = System.getProperties();
+
+        // Setup mail server
+        properties.put("mail.smtp.host", host);
+        properties.put("mail.smtp.port", 587);
+        properties.put("mail.smtp.auth", "true");
+        properties.put("mail.smtp.starttls.enable", "true");
+        properties.put("mail.user", from);
+        properties.put("mail.password", password);
+
+        // Get the default Session object.
+        Authenticator auth = new Authenticator()
+        {
+            public PasswordAuthentication getPasswordAuthentication()
+            {
+                return new PasswordAuthentication(from, password);
+            }
+        };
+        Session session = Session.getInstance(properties, auth);
+
+        try
+        {
+            // Create a default MimeMessage object.
+            MimeMessage message = new MimeMessage(session);
+
+            // Set From: header field of the header.
+            message.setFrom(new InternetAddress(from));
+
+            // Set To: header field of the header.
+            message.addRecipient(Message.RecipientType.TO,new InternetAddress(to));
+
+            // Set Subject: header field
+            message.setSubject("Password Reset MyGRV");
+
+            // Now set the actual message
+            message.setText("E' stato richiesto il reset della propria password. La nuova password è " + newPass);
+
+            // Send message
+            Transport.send(message);
+            System.out.println("Sent message successfully....");
+        } catch (MessagingException e) {
+            e.printStackTrace();
+            return new RecoverPassResponse(true, "Auth Error!");
+        }
+
+        String hashedPass = Hashing.sha256().hashString(newPass, StandardCharsets.UTF_8).toString();
+        u.setPassword(hashedPass);
+        userRepository.save(u);
+        userRepository.flush();
+
+        return new RecoverPassResponse();
+    }
+
+    public static String alphaNumericString(int len) {
+        String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        Random rnd = new Random();
+
+        StringBuilder sb = new StringBuilder(len);
+        for (int i = 0; i < len; i++) {
+            sb.append(AB.charAt(rnd.nextInt(AB.length())));
+        }
+        return sb.toString();
     }
 }
