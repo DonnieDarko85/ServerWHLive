@@ -6,9 +6,11 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface PgRepository extends JpaRepository<Pg, Long> {
 
-    @Query("SELECT pg " +
-            " FROM Pg pg " +
-            "WHERE pg.user.tessera = :tessera " +
-            "  AND status = 1")
+    @Query(value = "SELECT pg.* " +
+            " FROM pg pg " +
+            "WHERE pg.user_tessera = :tessera " +
+            "  AND pg.status = 1 " +
+            "LIMIT 0,1",
+            nativeQuery = true)
     Pg getActivePgForTessera(int tessera);
 }
